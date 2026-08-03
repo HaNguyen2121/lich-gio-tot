@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Dữ liệu tải & cache từ vutrungu (tự sinh lại khi chạy)
+cache/
+
+# macOS
+.DS_Store
