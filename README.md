@@ -9,6 +9,8 @@ Tính năng:
 - **Giờ tốt sắp tới** hiện ở đầu trang; ngày hôm nay được tô sáng.
 - Hào **Huyền Vũ** vẫn hiển thị nhưng bôi đen (không nên động, hợp cúng kiếng).
 - **Âm lịch** + **Can-Chi** ngày & giờ.
+- **Rê chuột vào tên quẻ** để xem **dịch tượng + ý nghĩa** (học Dịch) — dữ liệu 64 quẻ
+  nhúng sẵn trong `giotot/dichtuong.py`.
 - Bộ lọc *Chỉ Top 1* / *Ẩn hào Huyền Vũ*.
 - **Xuất .ics** để nạp vào Google Calendar / Lịch điện thoại (mỗi giờ tốt là 1 sự
   kiện có nhắc trước 10 phút).

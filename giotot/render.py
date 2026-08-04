@@ -3,7 +3,10 @@
 import calendar
 import datetime
 import html
+import json
 
+from .dichtuong import DICH_TUONG
+from .normalize import chuan_hoa
 from .parse import THU_VN
 
 _CSS = """
@@ -88,6 +91,13 @@ a.btn-sm:hover { background:#37474f; }
        padding:2px 7px; border-radius:20px; margin-left:6px; vertical-align:middle; }
 .gio.next { box-shadow:inset 3px 0 0 #13a923; }
 .gio.next.hv { box-shadow:inset 3px 0 0 #7CFC98; }
+/* Tooltip dịch tượng (rê chuột vào tên quẻ) */
+.qn { border-bottom:1px dotted currentColor; cursor:help; }
+#tip { position:fixed; z-index:9999; max-width:340px; background:#263238; color:#eceff1;
+       padding:11px 13px; border-radius:9px; font-size:13px; line-height:1.55;
+       box-shadow:0 8px 28px rgba(0,0,0,.32); display:none; pointer-events:none; }
+#tip .tip-ten { font-weight:700; color:#ffd54f; margin-bottom:5px; }
+#tip .tip-ct { font-style:italic; color:#b0bec5; margin-bottom:5px; }
 
 @media print {
   body { background:#fff; }
@@ -182,13 +192,21 @@ def render_index(error=None):
     return page("Giờ tốt Dịch lý", body)
 
 
+def _que_span(ten):
+    """Tên quẻ có gạch chân chấm; rê chuột hiện dịch tượng (nếu có dữ liệu)."""
+    key = chuan_hoa(ten)
+    tip = ' class="qn"' if key in DICH_TUONG else ""
+    return f'<span data-que="{_esc(key)}"{tip}>{_esc(ten)}</span>'
+
+
 def _render_gio(g, next_key=None, day_key=None):
     cls = g["tier"] + (" hv" if g.get("huyen_vu") else "")
     if next_key and day_key and f"{day_key}|{g['chi']}" == next_key:
         cls += " next"
+    que = f'{_que_span(g["que1"])} – {_que_span(g["que2"])}'
     return f"""<div class="gio {cls}">
   <span class="time">{_esc(g['khung_gio'])}</span>
-  <span class="que">{_esc(g['que1'])} – {_esc(g['que2'])}
+  <span class="que">{que}
        <span class="luc">· {_esc(g['luc_thu'])}</span></span>
   <span class="tag">{_esc(g['canchi'])} · Ngày {_esc(g['loai_ngay'])}</span>
 </div>"""
@@ -273,7 +291,39 @@ def render_results(tieu_de, filtered_days, ics_query="", nxt=None):
     });
   }
   document.getElementById('f-hidehv').addEventListener('change', applyFilters);
-</script>"""
+
+  // Tooltip dịch tượng
+  var DICHTUONG = __TIPDATA__;
+  var tip = document.getElementById('tip');
+  function moveTip(x, y) {
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    var nx = x + 14, ny = y + 16;
+    if (nx + w > window.innerWidth - 8) nx = x - w - 14;
+    if (ny + h > window.innerHeight - 8) ny = y - h - 16;
+    tip.style.left = Math.max(8, nx) + 'px';
+    tip.style.top = Math.max(8, ny) + 'px';
+  }
+  document.addEventListener('mouseover', function(e) {
+    var el = e.target.closest ? e.target.closest('.qn') : null;
+    if (!el) return;
+    var d = DICHTUONG[el.getAttribute('data-que')];
+    if (!d) return;
+    tip.innerHTML = '<div class="tip-ten"></div><div class="tip-ct"></div><div class="tip-yn"></div>';
+    tip.querySelector('.tip-ten').textContent = d.ten;
+    tip.querySelector('.tip-ct').textContent = d.chi_tuong;
+    tip.querySelector('.tip-yn').textContent = d.y_nghia;
+    tip.style.display = 'block';
+    moveTip(e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (tip.style.display !== 'block') return;
+    var el = e.target.closest ? e.target.closest('.qn') : null;
+    if (el) moveTip(e.clientX, e.clientY); else tip.style.display = 'none';
+  });
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.closest && e.target.closest('.qn')) tip.style.display = 'none';
+  });
+</script>""".replace("__TIPDATA__", json.dumps(DICH_TUONG, ensure_ascii=False))
     body = f"""
 <h1>{_esc(tieu_de)}</h1>
 {toolbar}
@@ -282,6 +332,7 @@ def render_results(tieu_de, filtered_days, ics_query="", nxt=None):
 {legend}
 {days_html}
 {note}
+<div id="tip" class="no-print"></div>
 {script}
 """
     return page(tieu_de, body)
