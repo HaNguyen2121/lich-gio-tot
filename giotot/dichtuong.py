@@ -394,12 +394,37 @@ DICH_TUONG = {
 }
 
 LUC_THU = {
-    'THANH LONG': {"ten": 'Thanh Long', "nguhanh": 'Mộc', "y_nghia": 'Tiền bạc, vui vẻ, hỉ tín.'},
-    'CHU TƯỚC': {"ten": 'Chu Tước', "nguhanh": 'Hỏa', "y_nghia": 'Báo tin, văn chương, nghệ thuật.'},
-    'CÂU TRẦN': {"ten": 'Câu Trần', "nguhanh": 'Thổ', "y_nghia": 'Chậm chạp, lâu dài.'},
-    'ĐẰNG XÀ': {"ten": 'Đằng Xà', "nguhanh": 'Hỏa (đủ 05 hành)', "y_nghia": 'Nhanh lẹ, quái dị.'},
-    'BẠCH HỔ': {"ten": 'Bạch Hổ', "nguhanh": 'Kim', "y_nghia": 'Cứng mạnh, hung bạo.'},
-    'HUYỀN VŨ': {"ten": 'Huyền Vũ', "nguhanh": 'Thủy', "y_nghia": 'Mờ ám, chưa rõ.'},
+    'THANH LONG': {
+        "ten": 'Thanh Long', "nguhanh": 'Mộc',
+        "y_nghia": 'Như giấy, cây cối, sự vui vẻ; ám chỉ tươi cười như hoa, may mắn.',
+        "mau": 'xanh lá cây',
+    },
+    'CHU TƯỚC': {
+        "ten": 'Chu Tước', "nguhanh": 'Âm Hỏa',
+        "y_nghia": 'Văn thơ, văn chương, lời nói, tranh biện cãi vã, dấu mộc, dấu vết, pháp lý.',
+        "mau": 'hường, đỏ lợt',
+    },
+    'CÂU TRẦN': {
+        "ten": 'Câu Trần', "nguhanh": 'Thổ',
+        "y_nghia": 'Ù lì, nọa tính, sức ì, ngoan cố, chậm chạp, đất đai, dai dẳng, kéo dài.',
+        "mau": 'xám tro, đất sét vàng',
+    },
+    'ĐẰNG XÀ': {
+        "ten": 'Đằng Xà', "nguhanh": 'Dương Hỏa',
+        "y_nghia": 'Lửa nóng, sét đánh, cực nhanh lẹ, chớp nhoáng, bất ngờ, bất thình lình, '
+                   'yêu quái, đa quái dị.',
+        "mau": 'đỏ',
+    },
+    'BẠCH HỔ': {
+        "ten": 'Bạch Hổ', "nguhanh": 'Kim',
+        "y_nghia": 'Như kim khí, cương cứng, thô cứng, hung dữ, thần chiến tranh.',
+        "mau": 'trắng',
+    },
+    'HUYỀN VŨ': {
+        "ten": 'Huyền Vũ', "nguhanh": 'Thủy',
+        "y_nghia": 'Bóng tối, ẩn núp, mờ ám, không minh bạch.',
+        "mau": 'đen',
+    },
 }
 
 

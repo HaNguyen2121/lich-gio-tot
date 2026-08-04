@@ -98,6 +98,7 @@ a.btn-sm:hover { background:#37474f; }
        box-shadow:0 8px 28px rgba(0,0,0,.32); display:none; pointer-events:none; }
 #tip .tip-ten { font-weight:700; color:#ffd54f; margin-bottom:5px; }
 #tip .tip-ct { font-style:italic; color:#b0bec5; margin-bottom:5px; }
+#tip .tip-mau { color:#90a4ae; font-size:12px; margin-top:5px; }
 /* Hình vạch hào (6 hào từ trên xuống) */
 #tip .hao-fig { display:flex; flex-direction:column; gap:3px; width:118px; margin-bottom:9px; }
 #tip .hao { display:flex; gap:11px; height:8px; }
@@ -346,8 +347,9 @@ def render_results(tieu_de, filtered_days, ics_query="", nxt=None):
         {'.tip-ten': d.ten, '.tip-ct': d.chi_tuong, '.tip-yn': d.y_nghia}, e.clientX, e.clientY);
     } else {
       var b = LUCTHU[t.el.getAttribute('data-lt')]; if (!b) return;
-      showTip('<div class="tip-ten"></div><div class="tip-yn"></div>',
-        {'.tip-ten': b.ten + ' — Ngũ hành: ' + b.nguhanh, '.tip-yn': b.y_nghia},
+      showTip('<div class="tip-ten"></div><div class="tip-yn"></div><div class="tip-mau"></div>',
+        {'.tip-ten': b.ten + ' — Ngũ hành: ' + b.nguhanh, '.tip-yn': b.y_nghia,
+         '.tip-mau': 'Màu: ' + b.mau},
         e.clientX, e.clientY);
     }
   });
