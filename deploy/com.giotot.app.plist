@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.giotot.app</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/hanguyen/miniconda3/bin/python3</string>
+        <string>-m</string>
+        <string>giotot</string>
+        <string>--no-open</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/hanguyen/Documents/Personal/Applications/Gio-tot-Dich-ly</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/hanguyen/Library/Logs/giotot.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/hanguyen/Library/Logs/giotot.log</string>
+</dict>
+</plist>

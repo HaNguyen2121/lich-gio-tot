@@ -69,6 +69,41 @@ python3 -m giotot --host 0.0.0.0
 
 Dừng server: nhấn **Ctrl + C** trong cửa sổ terminal đang chạy.
 
+## Chạy nền — luôn bật (macOS, không cần terminal)
+
+Đã cài sẵn một **dịch vụ nền (LaunchAgent)** để server **tự chạy khi đăng nhập** và
+**luôn sẵn sàng** — chỉ cần **bookmark** `http://127.0.0.1:5057` rồi mở bất cứ lúc nào,
+không cần mở terminal, không mất khi refresh. Nếu server bị tắt/treo, launchd tự bật lại
+(KeepAlive).
+
+- File cấu hình: `~/Library/LaunchAgents/com.giotot.app.plist`
+  (bản mẫu trong repo: [`deploy/com.giotot.app.plist`](deploy/com.giotot.app.plist))
+- Log: `~/Library/Logs/giotot.log`
+
+Quản lý dịch vụ:
+
+```bash
+# Xem trạng thái
+launchctl list | grep giotot
+
+# Tắt tạm (dừng dịch vụ)
+launchctl unload ~/Library/LaunchAgents/com.giotot.app.plist
+
+# Bật lại
+launchctl load ~/Library/LaunchAgents/com.giotot.app.plist
+
+# Khởi động lại (sau khi cập nhật code)
+launchctl unload ~/Library/LaunchAgents/com.giotot.app.plist && \
+launchctl load ~/Library/LaunchAgents/com.giotot.app.plist
+
+# Gỡ hẳn dịch vụ (không chạy nền nữa)
+launchctl unload ~/Library/LaunchAgents/com.giotot.app.plist && \
+rm ~/Library/LaunchAgents/com.giotot.app.plist
+```
+
+> Nếu **di chuyển thư mục project** hoặc **đổi Python** (vd cài lại miniconda), phải sửa
+> lại đường dẫn trong file plist (`ProgramArguments` và `WorkingDirectory`) rồi nạp lại.
+
 ## Xuất PDF
 
 Ở trang kết quả bấm **🖨 In / Lưu PDF** → trong hộp thoại in chọn "Save as PDF".
