@@ -5,7 +5,7 @@ import datetime
 import html
 import json
 
-from .dichtuong import DICH_TUONG
+from .dichtuong import DICH_TUONG, LUC_THU
 from .normalize import chuan_hoa
 from .parse import THU_VN
 
@@ -91,13 +91,17 @@ a.btn-sm:hover { background:#37474f; }
        padding:2px 7px; border-radius:20px; margin-left:6px; vertical-align:middle; }
 .gio.next { box-shadow:inset 3px 0 0 #13a923; }
 .gio.next.hv { box-shadow:inset 3px 0 0 #7CFC98; }
-/* Tooltip dịch tượng (rê chuột vào tên quẻ) */
-.qn { border-bottom:1px dotted currentColor; cursor:help; }
+/* Tooltip dịch tượng / lục thú (rê chuột vào tên quẻ hoặc lục thú) */
+.qn, .lt { border-bottom:1px dotted currentColor; cursor:help; }
 #tip { position:fixed; z-index:9999; max-width:340px; background:#263238; color:#eceff1;
        padding:11px 13px; border-radius:9px; font-size:13px; line-height:1.55;
        box-shadow:0 8px 28px rgba(0,0,0,.32); display:none; pointer-events:none; }
 #tip .tip-ten { font-weight:700; color:#ffd54f; margin-bottom:5px; }
 #tip .tip-ct { font-style:italic; color:#b0bec5; margin-bottom:5px; }
+/* Hình vạch hào (6 hào từ trên xuống) */
+#tip .hao-fig { display:flex; flex-direction:column; gap:3px; width:118px; margin-bottom:9px; }
+#tip .hao { display:flex; gap:11px; height:8px; }
+#tip .hao span { flex:1; background:#ff6f52; border-radius:1px; }
 
 @media print {
   body { background:#fff; }
@@ -109,6 +113,7 @@ a.btn-sm:hover { background:#37474f; }
   .day.today { border-color:#ccc !important; box-shadow:none !important; }
   .day.today > .head { background:#eee !important; }
   .gio.next { box-shadow:none !important; }
+  .qn, .lt { border-bottom:none !important; }   /* bỏ gạch chân khi in PDF */
   .badge, .gio.top1 .time, .gio.top2 .time, .gio.hv, .swatch,
   .banner, .day.today > .head, .today-tag {
        -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -193,10 +198,17 @@ def render_index(error=None):
 
 
 def _que_span(ten):
-    """Tên quẻ có gạch chân chấm; rê chuột hiện dịch tượng (nếu có dữ liệu)."""
+    """Tên quẻ có gạch chân chấm; rê chuột hiện vạch hào + dịch tượng."""
     key = chuan_hoa(ten)
     tip = ' class="qn"' if key in DICH_TUONG else ""
     return f'<span data-que="{_esc(key)}"{tip}>{_esc(ten)}</span>'
+
+
+def _lt_span(ten):
+    """Lục thú có gạch chân chấm; rê chuột hiện ý nghĩa."""
+    key = chuan_hoa(ten)
+    tip = ' class="lt"' if key in LUC_THU else ""
+    return f'<span data-lt="{_esc(key)}"{tip}>{_esc(ten)}</span>'
 
 
 def _render_gio(g, next_key=None, day_key=None):
@@ -207,7 +219,7 @@ def _render_gio(g, next_key=None, day_key=None):
     return f"""<div class="gio {cls}">
   <span class="time">{_esc(g['khung_gio'])}</span>
   <span class="que">{que}
-       <span class="luc">· {_esc(g['luc_thu'])}</span></span>
+       <span class="luc">· {_lt_span(g['luc_thu'])}</span></span>
   <span class="tag">{_esc(g['canchi'])} · Ngày {_esc(g['loai_ngay'])}</span>
 </div>"""
 
@@ -292,8 +304,9 @@ def render_results(tieu_de, filtered_days, ics_query="", nxt=None):
   }
   document.getElementById('f-hidehv').addEventListener('change', applyFilters);
 
-  // Tooltip dịch tượng
+  // Tooltip dịch tượng (quẻ) + lục thú
   var DICHTUONG = __TIPDATA__;
+  var LUCTHU = __LTDATA__;
   var tip = document.getElementById('tip');
   function moveTip(x, y) {
     var w = tip.offsetWidth, h = tip.offsetHeight;
@@ -303,27 +316,50 @@ def render_results(tieu_de, filtered_days, ics_query="", nxt=None):
     tip.style.left = Math.max(8, nx) + 'px';
     tip.style.top = Math.max(8, ny) + 'px';
   }
-  document.addEventListener('mouseover', function(e) {
-    var el = e.target.closest ? e.target.closest('.qn') : null;
-    if (!el) return;
-    var d = DICHTUONG[el.getAttribute('data-que')];
-    if (!d) return;
-    tip.innerHTML = '<div class="tip-ten"></div><div class="tip-ct"></div><div class="tip-yn"></div>';
-    tip.querySelector('.tip-ten').textContent = d.ten;
-    tip.querySelector('.tip-ct').textContent = d.chi_tuong;
-    tip.querySelector('.tip-yn').textContent = d.y_nghia;
+  function haoFig(hao) {
+    var rows = '';
+    for (var i = hao.length - 1; i >= 0; i--) {   // vẽ từ hào trên xuống dưới
+      rows += (hao.charAt(i) === '1')
+        ? '<div class="hao"><span></span></div>'
+        : '<div class="hao"><span></span><span></span></div>';
+    }
+    return '<div class="hao-fig">' + rows + '</div>';
+  }
+  function showTip(innerHtml, texts, x, y) {
+    tip.innerHTML = innerHtml;
+    for (var sel in texts) { var n = tip.querySelector(sel); if (n) n.textContent = texts[sel]; }
     tip.style.display = 'block';
-    moveTip(e.clientX, e.clientY);
+    moveTip(x, y);
+  }
+  function findTarget(e) {
+    if (!e.target.closest) return null;
+    var q = e.target.closest('.qn'); if (q) return {type: 'q', el: q};
+    var l = e.target.closest('.lt'); if (l) return {type: 'l', el: l};
+    return null;
+  }
+  document.addEventListener('mouseover', function(e) {
+    var t = findTarget(e); if (!t) return;
+    if (t.type === 'q') {
+      var d = DICHTUONG[t.el.getAttribute('data-que')]; if (!d) return;
+      showTip(haoFig(d.hao) + '<div class="tip-ten"></div><div class="tip-ct"></div>'
+              + '<div class="tip-yn"></div>',
+        {'.tip-ten': d.ten, '.tip-ct': d.chi_tuong, '.tip-yn': d.y_nghia}, e.clientX, e.clientY);
+    } else {
+      var b = LUCTHU[t.el.getAttribute('data-lt')]; if (!b) return;
+      showTip('<div class="tip-ten"></div><div class="tip-yn"></div>',
+        {'.tip-ten': b.ten + ' — Ngũ hành: ' + b.nguhanh, '.tip-yn': b.y_nghia},
+        e.clientX, e.clientY);
+    }
   });
   document.addEventListener('mousemove', function(e) {
     if (tip.style.display !== 'block') return;
-    var el = e.target.closest ? e.target.closest('.qn') : null;
-    if (el) moveTip(e.clientX, e.clientY); else tip.style.display = 'none';
+    if (findTarget(e)) moveTip(e.clientX, e.clientY); else tip.style.display = 'none';
   });
   document.addEventListener('mouseout', function(e) {
-    if (e.target.closest && e.target.closest('.qn')) tip.style.display = 'none';
+    if (findTarget(e)) tip.style.display = 'none';
   });
-</script>""".replace("__TIPDATA__", json.dumps(DICH_TUONG, ensure_ascii=False))
+</script>""".replace("__TIPDATA__", json.dumps(DICH_TUONG, ensure_ascii=False)) \
+           .replace("__LTDATA__", json.dumps(LUC_THU, ensure_ascii=False))
     body = f"""
 <h1>{_esc(tieu_de)}</h1>
 {toolbar}
