@@ -8,7 +8,7 @@ Lưu ý: cặp có thứ tự — "Lý - Trung Phu" (ngày Thiên) khác "Trung 
 tự tính loại ngày theo lý thuyết Dịch.
 
 Tên quẻ viết theo đúng chính tả nguồn lich.vutrungu.com (vd "Tụy", "Chu Tuớc").
-Thiếu Ngày Sơn/Núi: nếu sau này có dữ liệu, thêm mục "Sơn" vào REFERENCE.
+Ngày Sơn/Núi hiện mới có 1 cặp (Bí - Di); bổ sung thêm khi có dữ liệu.
 """
 
 from .normalize import chuan_hoa
@@ -74,11 +74,18 @@ REFERENCE = {
             ("Sư", "Thuần Khôn"),
             ("Thuần Khôn", "Sư"),
             ("Thái", "Lâm"),
+            ("Thái", "Nhu"),
         ],
         "top2": [
             ("Thăng", "Sư"),
             ("Thái", "Thăng"),
             ("Thăng", "Thái"),
+        ],
+    },
+    "Sơn": {
+        "top1": [],
+        "top2": [
+            ("Bí", "Di"),
         ],
     },
 }
