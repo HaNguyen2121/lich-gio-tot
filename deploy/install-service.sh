@@ -19,6 +19,9 @@ fi
 PLIST="$HOME/Library/LaunchAgents/com.giotot.app.plist"
 mkdir -p "$HOME/Library/LaunchAgents" "$HOME/Library/Logs"
 
+# Biên dịch sẵn bytecode để lần khởi động đầu không tranh ghi .pyc
+"$PYTHON" -m compileall -q "$PROJECT_DIR/giotot" 2>/dev/null || true
+
 cat > "$PLIST" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

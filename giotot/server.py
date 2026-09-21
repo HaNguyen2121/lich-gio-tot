@@ -1,5 +1,6 @@
 """HTTP server thuần thư viện chuẩn cho app Giờ tốt Dịch lý."""
 
+import socket
 import urllib.error
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -31,6 +32,21 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
+        # Bọc toàn bộ để MỌI lỗi đều trả về một trang (không bao giờ để trình
+        # duyệt nhận rỗng -> ERR_EMPTY_RESPONSE).
+        try:
+            self._route()
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # client đóng kết nối giữa chừng
+        except Exception:
+            try:
+                self._send(render.render_index(
+                    error="Có lỗi tạm thời khi xử lý. Bấm Reload để thử lại nhé."),
+                    status=500)
+            except Exception:
+                pass
+
+    def _route(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
@@ -91,7 +107,17 @@ class Handler(BaseHTTPRequestHandler):
         pass  # tắt log ồn ào ra terminal
 
 
+def _port_in_use(host, port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.5)
+        return s.connect_ex((host, port)) == 0
+
+
 def run(host="127.0.0.1", port=5057):
+    # Tránh tạo tiến trình server thứ 2 trên cùng cổng (gây tranh chấp cache).
+    if _port_in_use(host, port):
+        print(f"  Đã có một bản đang chạy ở http://{host}:{port} — thoát.")
+        return
     server = ThreadingHTTPServer((host, port), Handler)
     url = f"http://{host}:{port}"
     print(f"  Giờ tốt Dịch lý đang chạy tại:  {url}")

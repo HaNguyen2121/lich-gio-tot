@@ -25,6 +25,9 @@ if (-not $PyExe) {
     exit 1
 }
 
+# Bien dich san bytecode de lan khoi dong dau khong tranh ghi .pyc
+& $PyExe -m compileall -q "$ProjectDir\giotot" 2>$null
+
 $Action = New-ScheduledTaskAction -Execute $PyExe `
     -Argument "-m giotot --no-open --port $Port" -WorkingDirectory $ProjectDir
 $Trigger = New-ScheduledTaskTrigger -AtLogOn
