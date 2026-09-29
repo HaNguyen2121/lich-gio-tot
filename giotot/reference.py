@@ -60,6 +60,7 @@ REFERENCE = {
         ],
         "top2": [
             ("Tiệm", "Gia Nhân"),
+            ("Gia Nhân", "Bí"),
         ],
     },
     "Thủy": {
@@ -86,6 +87,7 @@ REFERENCE = {
         "top1": [],
         "top2": [
             ("Bí", "Di"),
+            ("Bí", "Gia Nhân"),
         ],
     },
 }
