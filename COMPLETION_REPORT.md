@@ -36,6 +36,7 @@ Có thể **In/Lưu PDF** và **xuất lịch .ics**.
 | 9 | Bản in PDF hiện dấu hiệu "thời điểm" gây rối | Banner/HÔM NAY/highlight/gạch chân in ra | `@media print`: ẩn banner, nhãn HÔM NAY, highlight ngày & giờ sắp tới, bỏ gạch chân |
 | 10 | Banner "sắp tới" **biến mất** khi xem ngày/tuần | Chỉ dò trong khoảng đang xem (đã qua) | `service.next_good_hour()` — luôn dò giờ kế tiếp thật sự từ hiện tại, độc lập khoảng xem |
 | 11 | **ERR_EMPTY_RESPONSE** khi xem khoảng nhiều tháng | **Nhiều tiến trình server trùng** đọc/ghi cùng file cache + tranh ghi `.pyc` lúc khởi động → `OSError: Resource deadlock avoided` làm handler chết giữa chừng | (a) `fetch.py` ghi cache **atomic** (temp + `os.replace`) + **retry** khi đọc; (b) `server.py` **bọc handler bắt mọi lỗi** → luôn trả trang, không bao giờ rỗng; (c) **chặn tạo listener thứ 2** trên cùng cổng; (d) **precompile bytecode** trong script cài |
+| 12 | **ERR_CONNECTION_REFUSED** (service tắt hẳn) sau khi **nâng cấp macOS** (Darwin 25→27) | Lúc reboot nâng cấp, nhiều tiến trình đọc file cùng lúc → python crash EDEADLK khi import; launchd crash nhiều lần rồi **"park" job** (không tự bật lại nữa) | Đổi LaunchAgent sang chạy trong **vòng lặp bash tự thử lại** (`while true; do python -m giotot ...; sleep 3; done`) → launchd chỉ thấy 1 tiến trình bọc chạy dài, mọi crash tạm thời tự hồi phục sau 3s (đã kiểm: giết tiến trình → tự bật lại) |
 
 ---
 

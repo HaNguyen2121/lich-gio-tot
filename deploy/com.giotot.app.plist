@@ -5,12 +5,14 @@
     <key>Label</key>
     <string>com.giotot.app</string>
 
+    <!-- Chạy trong vòng lặp bash để tự thử lại nếu python crash tạm thời
+         (vd EDEADLK lúc máy khởi động lại / nâng cấp macOS). Bản thật do
+         deploy/install-service.sh sinh ra với đường dẫn của từng máy. -->
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/hanguyen/miniconda3/bin/python3</string>
-        <string>-m</string>
-        <string>giotot</string>
-        <string>--no-open</string>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>cd '/Users/hanguyen/Documents/Personal/Applications/Gio-tot-Dich-ly'; while true; do '/Users/hanguyen/miniconda3/bin/python3' -m giotot --no-open --port 5057; sleep 3; done</string>
     </array>
 
     <key>WorkingDirectory</key>

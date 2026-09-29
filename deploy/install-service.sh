@@ -30,10 +30,9 @@ cat > "$PLIST" <<EOF
     <key>Label</key><string>com.giotot.app</string>
     <key>ProgramArguments</key>
     <array>
-        <string>$PYTHON</string>
-        <string>-m</string><string>giotot</string>
-        <string>--no-open</string>
-        <string>--port</string><string>$PORT</string>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>cd '$PROJECT_DIR'; while true; do '$PYTHON' -m giotot --no-open --port $PORT; sleep 3; done</string>
     </array>
     <key>WorkingDirectory</key><string>$PROJECT_DIR</string>
     <key>RunAtLoad</key><true/>
