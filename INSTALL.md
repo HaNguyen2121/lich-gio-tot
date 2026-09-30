@@ -3,6 +3,11 @@
 App chỉ dùng **Python thư viện chuẩn** — **không cần cài thêm gói nào**.
 Chạy được trên **macOS** và **Windows**.
 
+> ⚠️ **Quan trọng — chọn nơi cài:** đặt app ở thư mục **local, KHÔNG đồng bộ đám mây**.
+> Tránh **Desktop/Documents nếu bật iCloud** (macOS) hay **OneDrive** (Windows): khi đĩa
+> đầy, dịch vụ đám mây có thể "rút" nội dung file mã nguồn ra khỏi máy (offload) làm app
+> chạy nền bị lỗi. Khuyến nghị: macOS dùng `~/Applications`, Windows dùng `C:\Tools`.
+
 ---
 
 ## A. macOS
@@ -25,7 +30,8 @@ xcode-select --install
 ### 2. Tải mã nguồn
 
 ```bash
-cd ~/Documents
+mkdir -p ~/Applications        # thư mục local, không đồng bộ iCloud
+cd ~/Applications
 git clone https://github.com/HaNguyen2121/lich-gio-tot.git
 cd lich-gio-tot
 ```
@@ -68,7 +74,8 @@ git --version
 ### 2. Tải mã nguồn
 
 ```powershell
-cd $HOME\Documents
+mkdir C:\Tools -Force        # thư mục local, tránh Documents nếu bị OneDrive đồng bộ
+cd C:\Tools
 git clone https://github.com/HaNguyen2121/lich-gio-tot.git
 cd lich-gio-tot
 ```
